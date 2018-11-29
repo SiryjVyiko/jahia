@@ -4,7 +4,7 @@ name: Backup for Jahia DEM
 logo: /images/jahia-backup-logo-70x70.png
 id: jahia-dx-backup
 description: Backup for Jahia - Digital Experience Manager
-baseUrl: https://raw.githubusercontent.com/jelastic-jps/jahia/master
+baseUrl: https://raw.githubusercontent.com/SiryjVyiko/jahia/master
 
 targetNodes:
   nodeGroup: cp

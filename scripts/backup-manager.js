@@ -85,6 +85,7 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
+		'yum -y install lftp',
                 lftp.cmd([
                     "mkdir %(envName)",
                     "mkdir %(envName)/%(backupDir)"
@@ -106,6 +107,7 @@ function BackupManager(config) {
             }],
 
             [ me.cmd, [
+		"yum -y install lftp",
                 "CT='Content-Type:application/json'",
                 "curl -H $CT -X PUT -d '{\"type\":\"fs\",\"settings\":{\"location\":\"all\"}}' '%(elasticSearchUrl)'",
                 "curl -H $CT -X DELETE '%(elasticSearchUrl)/snapshot'",
