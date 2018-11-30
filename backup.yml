@@ -72,7 +72,6 @@ globals:
   scriptSufix: jahia-backup
 
 onInstall:
-- installFTPClient
 - installScript:
     cronTime: ${settings.cronTime}
     backupCount: ${settings.backupCount}
@@ -80,19 +79,10 @@ onInstall:
 
 onUninstall:
   callScript: uninstall
-  
-onAfterRedeployContainer[proc]:
-- cmd [proc]: yum -y install lftp
-
-onAfterRedeployContainer[es]:
-- cmd [es]: yum -y install lftp
 
 startPage: ${env.url}
 
 actions:
-  installFTPClient:
-    cmd [proc, es]: yum -y install lftp
-
   installScript:
     script: ${baseUrl}/scripts/create-backup-main-script.js?_r=${fn.random}
     params:
@@ -118,4 +108,3 @@ actions:
         cronTime: ${this.cronTime}
         backupCount: ${this.backupCount}
         ftpHost: ${this.ftpHost}
-
