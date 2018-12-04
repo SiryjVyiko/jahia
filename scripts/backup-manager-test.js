@@ -618,7 +618,7 @@ function BackupManager(config) {
     };
 
     me.getEmailTitle = function (title) {
-        return title + ": Jahia Backup failed at " + config.envDomain;
+        return title + ": Jahia Backup at " + config.envDomain;
     };
 
 }
