@@ -82,7 +82,7 @@ function BackupManager(config) {
             backupDir += "-manual";
         }
 
-        var execResponse = me.exec([
+        return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
                 lftp.cmd([
@@ -127,8 +127,6 @@ function BackupManager(config) {
                 backupDir : backupDir
             }]
         ]);
-	    
-	return {result: 0};
     };
 
     me.checkEnvStatus = function checkEnvStatus() {
