@@ -128,8 +128,6 @@ function BackupManager(config) {
             }]
         ]);
 	    
-	if (execResponse.result != 0)
-	    { return execResponse; }
 	return {result: 0};
     };
 
