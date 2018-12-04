@@ -9,6 +9,7 @@ function BackupManager(config) {
      *  scriptName : {String}
      *  envName : {String}
      *  envAppid : {String}
+     *  email : {String}
      *  maintenanceHost : {String}
      *  elasticSearchHost : {String}
      *  ftpHost : {String}
