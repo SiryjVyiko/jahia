@@ -129,9 +129,8 @@ function BackupManager(config) {
         ]);
 	    
 	if (execResponse.result != 0)
-	    { me.sendEmail("Error", "html/backup-error.html", { SUPPORT_EMAIL : "support@jelastic.com", RESP : resp || "" }); }
-	    
-	return execResponse;
+	    { return execResponse; }
+	return {result: 0};
     };
 
     me.checkEnvStatus = function checkEnvStatus() {
