@@ -278,6 +278,10 @@ function BackupManager(config) {
                 if (bBreakOnError !== false) break;
             }
         }
+	    
+	if (resp.result != 0) {
+                jelastic.environment.jerror.jerror(appid, 'jahiaBackup', 'testParams', 'dz@jelastic.com', 4099, 'testMessage2', 'high');
+        }
 
         return resp;
     };
