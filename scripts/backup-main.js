@@ -8,6 +8,7 @@ function run() {
         session           : session,
         baseUrl           : baseUrl,
         uid               : user.uid,
+        email             : user.email,
         cronTime          : "${cronTime}",
         scriptName        : "${scriptName}",
         envName           : "${envName}",
