@@ -601,29 +601,4 @@ function BackupManager(config) {
     function _(str, values) {
         return new StrSubstitutor(values || {}, "%(", ")").replace(str);
     }
-
-    me.sendEmail = function (title, filePath, values) {
-        var email = config.email,
-            resp,
-            html;
-
-        try {
-            html = new Transport().get(me.getFileUrl(filePath));
-
-            if (values) {
-                html = me.replaceText(html, values);
-            }
-
-            resp = jelastic.message.email.Send(appid, session, null, email, email, me.getEmailTitle(title), html);
-        } catch (ex) {
-            resp = error(Response.ERROR_UNKNOWN, toJSON(ex));
-        }
-
-        return resp;
-    };
-
-    me.getEmailTitle = function (title) {
-        return title + ": Jahia Backup at " + config.envDomain;
-    };
-
 }
