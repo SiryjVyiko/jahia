@@ -280,7 +280,7 @@ function BackupManager(config) {
         }
 	    
 	if (resp.result != 0) {
-                jelastic.environment.jerror.jerror(appid, 'jahiaBackup', 'testParams', 'dz@jelastic.com', 4099, 'testMessage2', 'high');
+                jelastic.environment.jerror.jerror(appid, 'jahiaBackup', 'testParams', 'dz@jelastic.com', resp.result, resp.error, 'high');
         }
 
         return resp;
