@@ -87,7 +87,6 @@ function BackupManager(config) {
             [ me.checkEnvStatus ],
             [ me.cmd, [
                 lftp.cmd([
-                    "mkdir %(envName)",
                     "mkdir %(envName)/%(backupDir)"
                 ]),
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
