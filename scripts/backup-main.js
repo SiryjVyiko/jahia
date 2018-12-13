@@ -12,6 +12,7 @@ function run() {
         cronTime          : "${cronTime}",
         scriptName        : "${scriptName}",
         envName           : "${envName}",
+	envDomain         : "${envDomain}",
         envAppid          : "${envAppid}",
         maintenanceHost   : "${maintenanceHost}",
         elasticSearchHost : "${elasticSearchHost}",

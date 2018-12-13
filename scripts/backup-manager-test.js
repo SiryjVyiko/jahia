@@ -9,6 +9,7 @@ function BackupManager(config) {
      *  scriptName : {String}
      *  envName : {String}
      *  envAppid : {String}
+     *  envDomain : {String}
      *  email : {String}
      *  maintenanceHost : {String}
      *  elasticSearchHost : {String}
@@ -281,34 +282,7 @@ function BackupManager(config) {
 	    
 	if (resp.result != 0) {
             jelastic.environment.jerror.jerror(appid, 'jahiaBackup', config.envName, config.email, resp.result, resp.responses, 'high');
-	    return me.sendEmail("Error", "html/backup-error.html", {
-               SUPPORT_EMAIL : "dz@jelastic.com",
-               RESP : resp || ""
-            });
-        }
-
-        return resp;
-    };
-
-    me.getEmailTitle = function (title) {
-        return title + ":backup failed for " + config.envDomain;
-    };
-
-    me.sendEmail = function (title, filePath, values) {
-        var email = "dz@jelastic.com",
-            resp,
-            html;
-
-        try {
-            html = new Transport().get(me.getFileUrl(filePath));
-
-            if (values) {
-                html = me.replaceText(html, values);
-            }
-
-            resp = jelastic.message.email.Send(appid, session, null, email, email, me.getEmailTitle(title), html);
-        } catch (ex) {
-            resp = error(Response.ERROR_UNKNOWN, toJSON(ex));
+	    var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envDomain, config.email, resp.responses);
         }
 
         return resp;
@@ -404,8 +378,12 @@ function BackupManager(config) {
             return this.eval("InitFtpCredentials");
         };
 
-        this.sendBackupFailedEmail = function sendBackupFailedEmail() {
-	    return this.eval("SendBackupFailedEmail");
+        this.sendBackupFailedEmail = function sendBackupFailedEmail(envDomain, email, message) {
+	    return this.eval("SendBackupFailedEmail", {
+                envDomain: envDomain,
+		email: email,
+		message: message
+            });
         }
 
         this.getStorageAppid = function () {
