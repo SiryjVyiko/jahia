@@ -89,20 +89,26 @@ function BackupManager(config) {
             [ me.cmd, [
                 lftp.cmd([
                     "mkdir %(envName)",
-                    "mkdir %(envName)/%(backupDir)"
+                    "mkdir %(envName)/%(backupDir)",
+		    "mkdir %(envName)/%(backupDir)/variables"
                 ]),
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
                 'tar -zcf data.tar.gz /data',
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false',
+		'wget $(excludeListUrl)',
+		'grep -v -f variables_exclude_list /.jelenv > variables_processing'
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
-                    "put jahia.sql"
+                    "put jahia.sql",
+		    "cd %(envName)/%(backupDir)/variables",
+		    "put variables_processing"
                 ])
             ], {
                 nodeGroup : "proc",
                 envName : config.envName,
+		excludeListUrl: config.baseUrl + "/variables_exclude_list",
                 maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost }),
                 backupDir : backupDir
             }],
