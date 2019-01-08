@@ -124,7 +124,7 @@ function BackupManager(config) {
                 envName : config.envName,
                 excludeListUrl: config.baseUrl + "/variables_exclude_list",
                 backupDir : backupDir
-            }]	
+            }],	
             [ me.cmd, [
                 "CT='Content-Type:application/json'",
                 "curl -H $CT -X PUT -d '{\"type\":\"fs\",\"settings\":{\"location\":\"all\"}}' '%(elasticSearchUrl)'",
