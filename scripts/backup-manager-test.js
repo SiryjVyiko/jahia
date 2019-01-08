@@ -118,7 +118,7 @@ function BackupManager(config) {
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)/variables",
                     "put variables_browsing"
-                ]),
+                ])
             ], {
                 nodeGroup: "cp",
                 envName : config.envName,
