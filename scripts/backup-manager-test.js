@@ -157,7 +157,6 @@ function BackupManager(config) {
 	    [ me.cmd, [
 		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
-		'touch variables_unomi',
                 'grep -v -f variables_exclude_list /.jelenv > variables_unomi',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)/variables",
