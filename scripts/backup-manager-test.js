@@ -89,8 +89,7 @@ function BackupManager(config) {
             [ me.cmd, [
                 lftp.cmd([
                     "mkdir %(envName)",
-                    "mkdir %(envName)/%(backupDir)",
-		    "mkdir %(envName)/%(backupDir)/variables"
+                    "mkdir %(envName)/%(backupDir)"
                 ]),
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
                 'tar -zcf data.tar.gz /data',
@@ -102,7 +101,8 @@ function BackupManager(config) {
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "put jahia.sql",
-		    "cd %(envName)/%(backupDir)/variables",
+		    "mkdir variables"
+		    "cd variables",
 		    "put variables_processing"
                 ])
             ], {
