@@ -124,6 +124,45 @@ function BackupManager(config) {
                 envName : config.envName,
                 excludeListUrl: config.baseUrl + "/variables_exclude_list",
                 backupDir : backupDir
+            }],
+	    [ me.cmd, [
+                'wget -q %(excludeListUrl) -O variables_exclude_list',
+                'grep -v -f variables_exclude_list /.jelenv > variables_mysql',
+                lftp.cmd([
+                    "cd %(envName)/%(backupDir)/variables",
+                    "put variables_mysql"
+                ])
+            ], {
+                nodeGroup: "sqldb",
+                envName : config.envName,
+                excludeListUrl: config.baseUrl + "/variables_exclude_list",
+                backupDir : backupDir
+            }],
+	    [ me.cmd, [
+                'wget -q %(excludeListUrl) -O variables_exclude_list',
+                'grep -v -f variables_exclude_list /.jelenv > variables_redis',
+                lftp.cmd([
+                    "cd %(envName)/%(backupDir)/variables",
+                    "put variables_redis"
+                ])
+            ], {
+                nodeGroup: "nosqldb",
+                envName : config.envName,
+                excludeListUrl: config.baseUrl + "/variables_exclude_list",
+                backupDir : backupDir
+            }],	
+	    [ me.cmd, [
+                'wget -q %(excludeListUrl) -O variables_exclude_list',
+                'grep -v -f variables_exclude_list /.jelenv > variables_unomi',
+                lftp.cmd([
+                    "cd %(envName)/%(backupDir)/variables",
+                    "put variables_unomi"
+                ])
+            ], {
+                nodeGroup: "unomi",
+                envName : config.envName,
+                excludeListUrl: config.baseUrl + "/variables_exclude_list",
+                backupDir : backupDir
             }],	
             [ me.cmd, [
                 "CT='Content-Type:application/json'",
