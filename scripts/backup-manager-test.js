@@ -113,6 +113,7 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],
 	    [ me.cmd, [
+		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_browsing',
                 lftp.cmd([
@@ -126,6 +127,7 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],
 	    [ me.cmd, [
+		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_mysql',
                 lftp.cmd([
@@ -139,6 +141,7 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],
 	    [ me.cmd, [
+		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_redis',
                 lftp.cmd([
@@ -152,6 +155,7 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],	
 	    [ me.cmd, [
+		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_unomi',
                 lftp.cmd([
