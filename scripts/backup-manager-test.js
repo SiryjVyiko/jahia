@@ -97,7 +97,7 @@ function BackupManager(config) {
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false',
 		'wget $(excludeListUrl)',
-		'grep -v -f variables_exclude_list /.jelenv > variables_processing'
+		'grep -v -f variables_exclude_list /.jelenv > variables_processing',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
