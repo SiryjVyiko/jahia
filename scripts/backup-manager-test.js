@@ -100,10 +100,7 @@ function BackupManager(config) {
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
-                    "put jahia.sql",
-		    "mkdir variables"
-		    "cd variables",
-		    "put variables_processing"
+                    "put jahia.sql"
                 ])
             ], {
                 nodeGroup : "proc",
