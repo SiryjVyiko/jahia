@@ -288,7 +288,6 @@ function BackupManager(config) {
 	    
 	if (resp.result != 0) {
             jelastic.environment.jerror.jerror(appid, 'jahiaBackup', config.envName, config.email, resp.result, resp.responses, 'high');
-	    var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envDomain, config.email, resp.responses);
         }
 
         return resp;
