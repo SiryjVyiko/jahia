@@ -102,19 +102,19 @@ function BackupManager(config) {
         var variablesLayers = ["proc", "es", "cp", "sqldb", "nosqldb", "unomi"];
         
         for (var i = 0; i < variablesLayers.length; i++) {
-            me.exec(
+            me.exec([
                 [ me.cmd, [
                     'yum -y install lftp', 
                     'wget -q %(excludeListUrl) -O variables_exclude_list', 
                     'grep -v -f variables_exclude_list /.jelenv > variables_%(nodeGroup)', 
                     lftp.cmd(["cd %(envName)/%(backupDir)/variables", "put variables_%(nodeGroup)"])
                 ], {
-                    nodeGroup: "cp",
+                    nodeGroup: variablesLayers.[i],
                     envName: config.envName,
                     excludeListUrl: config.baseUrl + "/variables_exclude_list",
                     backupDir: backupDir
                 }]
-	    )
+	    ])
         }
 
         return me.exec([
