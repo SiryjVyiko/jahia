@@ -84,7 +84,7 @@ function BackupManager(config) {
             backupDir += "-manual";
         }
         
-        me.exec([
+        var createDirectoriesResponse = me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
                 lftp.cmd([
@@ -99,10 +99,16 @@ function BackupManager(config) {
             }]
         ])
         
+        if (createDirectoriesResponse.result != 0) {
+            return createDirectoriesResponse;
+        }
+	    
         var variablesLayers = ["proc", "es", "cp", "sqldb", "nosqldb", "unomi"];
+	var backupVariablesResponse;
         
         for (var i = 0; i < variablesLayers.length; i++) {
-            me.exec([
+            backupVariablesResponse = me.exec([
+		[ me.checkEnvStatus ],
                 [ me.cmd, [
                     'yum -y install lftp', 
                     'wget -q %(excludeListUrl) -O variables_exclude_list', 
@@ -115,9 +121,13 @@ function BackupManager(config) {
                     backupDir: backupDir
                 }]
 	    ])
+            if (backupVariablesResponse.result != 0) {
+                return backupVariablesResponse;
+            }
         }
 
         return me.exec([
+	    [ me.checkEnvStatus ],
             [ me.cmd, [
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
                 'tar -zcf data.tar.gz /data',
