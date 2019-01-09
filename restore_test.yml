@@ -19,7 +19,7 @@ onInstall:
         settings:
           skipStart: 'true'
     - install:
-        jps: ${baseUrl}/restore.yml?_r=${fn.random}
+        jps: ${baseUrl}/restore_test.yml?_r=${fn.random}
         envName: ${settings.newEnvName}
         region: ${settings.targetRegion}
         settings:
