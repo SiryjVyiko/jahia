@@ -96,14 +96,14 @@ function BackupManager(config) {
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false',
 		'wget -q %(excludeListUrl) -O variables_exclude_list',
-		'grep -v -f variables_exclude_list /.jelenv > variables_processing',
+		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "put jahia.sql",
 		    "mkdir variables",	
 		    "cd variables",	
-		    "put variables_processing"
+		    "put variables_proc"
                 ])
             ], {
                 nodeGroup : "proc",
@@ -115,10 +115,10 @@ function BackupManager(config) {
 	    [ me.cmd, [
 		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_browsing',
+                'grep -v -f variables_exclude_list /.jelenv > variables_cp',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)/variables",
-                    "put variables_browsing"
+                    "put variables_cp"
                 ])
             ], {
                 nodeGroup: "cp",
@@ -129,10 +129,10 @@ function BackupManager(config) {
 	    [ me.cmd, [
 		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_mysql',
+                'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)/variables",
-                    "put variables_mysql"
+                    "put variables_sqldb"
                 ])
             ], {
                 nodeGroup: "sqldb",
@@ -143,10 +143,10 @@ function BackupManager(config) {
 	    [ me.cmd, [
 		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_redis',
+                'grep -v -f variables_exclude_list /.jelenv > variables_nosqldb',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)/variables",
-                    "put variables_redis"
+                    "put variables_nosqldb"
                 ])
             ], {
                 nodeGroup: "nosqldb",
@@ -175,12 +175,12 @@ function BackupManager(config) {
                 "curl -H $CT -X PUT '%(elasticSearchUrl)/snapshot?wait_for_completion=true'",
                 "tar -zcf es.tar.gz /var/lib/elasticsearch/backup/*",
 		'wget -q %(excludeListUrl) -O variables_exclude_list',
-		'grep -v -f variables_exclude_list /.jelenv > variables_elasticsearch',
+		'grep -v -f variables_exclude_list /.jelenv > variables_es',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put es.tar.gz",
 		    "cd variables",	
-		    "put variables_elasticsearch"
+		    "put variables_es"
                 ]),
                 'number_of_backups=$(' + lftp.cmd("ls %(envName)/") + '| wc -l)',
                 '[ "${number_of_backups}" -gt "%(backupCount)" ] && { let "number_for_deletion = ${number_of_backups} - %(backupCount)"; backups_for_deletion=$(' + lftp.cmd("ls %(envName)") + ' | awk \'{print $9}\'|head -$number_for_deletion ); } || true',
