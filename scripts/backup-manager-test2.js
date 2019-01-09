@@ -113,7 +113,7 @@ function BackupManager(config) {
                     envName: config.envName,
                     excludeListUrl: config.baseUrl + "/variables_exclude_list",
                     backupDir: backupDir
-                }]
+                }])
             if (variablesBackupResponse.result != 0) {
                 return createBackupDirectoriesResponse;
             }
