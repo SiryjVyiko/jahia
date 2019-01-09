@@ -72,7 +72,7 @@ actions:
     - forEach(item:env.nodes):
         cmd[${@item.id}]: |-
           VARIABLES_FILE_URL="ftp://${this.ftpUser}:${this.ftpPassword}@${this.ftpHost}/${settings.envName}/${settings.backupDir}/variables/variables_${@item.nodeGroup}"
-          echo "${VARIABLES_FILE_URL}"
+          curl --silent --output /dev/null -I ${VARIABLES_FILE_URL} && curl ${VARIABLES_FILE_URL} >> /.jelenv || true
         user: root
  
     - api: env.control.ExecDockerRunCmd
