@@ -69,7 +69,7 @@ actions:
         rm -f es.tar.gz
       user: root
    
-     - cmd[proc, es, cp, sqldb, nosqldb, unomi]: |-
+    - cmd[proc, es, cp, sqldb, nosqldb, unomi]: |-
         VARIABLES_FILE_URL="ftp://${this.ftpUser}:${this.ftpPassword}@${this.ftpHost}/${settings.envName}/${settings.backupDir}/variables/variables_${this.nodeType}"
 	echo "VARIABLES_FILE_URL"
       user: root
