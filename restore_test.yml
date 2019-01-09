@@ -69,8 +69,8 @@ actions:
         rm -f es.tar.gz
       user: root
    
-    forEach(item:env.nodes):
-      - cmd[${@item.id}]: |-
+    - forEach(item:env.nodes):
+        cmd[${@item.id}]: |-
           VARIABLES_FILE_URL="ftp://${this.ftpUser}:${this.ftpPassword}@${this.ftpHost}/${settings.envName}/${settings.backupDir}/variables/variables_${@item.nodeGroup}"
           echo "${VARIABLES_FILE_URL}"
         user: root
