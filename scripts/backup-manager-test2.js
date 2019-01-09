@@ -109,7 +109,7 @@ function BackupManager(config) {
                     'grep -v -f variables_exclude_list /.jelenv > variables_%(nodeGroup)', 
                     lftp.cmd(["cd %(envName)/%(backupDir)/variables", "put variables_%(nodeGroup)"])
                 ], {
-                    nodeGroup: variablesLayers.[i],
+                    nodeGroup: variablesLayers[i],
                     envName: config.envName,
                     excludeListUrl: config.baseUrl + "/variables_exclude_list",
                     backupDir: backupDir
