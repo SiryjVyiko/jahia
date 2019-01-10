@@ -87,10 +87,13 @@ function BackupManager(config) {
         var createDirectoriesResponse = me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
+		'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
                 lftp.cmd([
                     "mkdir %(envName)",
                     "mkdir %(envName)/%(backupDir)",
-                    "mkdir %(envName)/%(backupDir)/variables"
+                    "mkdir %(envName)/%(backupDir)/variables",
+		    "cd %(envName)/%(backupDir)/variables",
+		    "put jahia_version"
                 ])
             ], {
                 nodeGroup : "proc",
