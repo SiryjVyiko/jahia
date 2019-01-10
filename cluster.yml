@@ -10,7 +10,10 @@ description:
     your entire digital ecosystem to innovate and deliver great customer experiences,
     foster internal collaboration and support dynamic business needs for sustainable
     growth.
-baseUrl: https://raw.githubusercontent.com/SiryjVyiko/jahia/master
+baseUrl: https://raw.githubusercontent.com/jelastic-jps/jahia/master
+
+onBeforeInit: https://raw.githubusercontent.com/SiryjVyiko/jahia/master/scripts/clusterOnBeforeInit.js?_r=dsfsdfds
+
 globals:
   db_user: jahia-db-${fn.random}
   db_pass: ${fn.password(20)}
@@ -29,11 +32,10 @@ globals:
     -DHOST_NAME=$(hostname)
     -XX:MaxPermSize=512m
   
- 
 ssl: true
 skipNodeEmails: true
 nodes:  
-  - image: jahiadev/browsing:7.2.1.1
+  - image: jahiadev/browsing:${settings.tag}
     displayName: Browsing
     count: 2
     cloudlets: 64
@@ -58,7 +60,7 @@ nodes:
       /data/digital-factory-data/repository/datastore:
         sourceNodeGroup: proc 
     
-  - image: jahiadev/processing:7.2.1.1
+  - image: jahiadev/processing:${settings.tag}
     displayName: Processing
     count: 1
     cloudlets: 64
