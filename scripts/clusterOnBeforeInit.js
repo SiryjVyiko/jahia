@@ -23,8 +23,8 @@ jelastic.local.returnResult({
             "type": "list",
             "name": "tag",
             "required": true,
-            "default": (tagList[0] || {}).value || "",
-            "values": tagList
+            "default": (tagsList[0] || {}).value || "",
+            "values": tagsList
         }]
     }
 });
