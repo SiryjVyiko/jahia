@@ -79,10 +79,22 @@ onInstall:
 
 onUninstall:
   callScript: uninstall
+  
+onAfterRedeployContainer[proc]:
+- cmd [proc]: yum -y install lftp
+
+onAfterRedeployContainer[es]:
+- cmd [es]: yum -y install lftp
+
+onAfterRedeployContainer[sqldb]:
+- cmd [es]: yum -y install lftp
 
 startPage: ${env.url}
 
 actions:
+  installFTPClient:
+    cmd [proc, es, sqldb]: yum -y install lftp
+
   installScript:
     script: ${baseUrl}/scripts/create-backup-main-script.js?_r=${fn.random}
     params:
