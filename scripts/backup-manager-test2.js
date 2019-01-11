@@ -87,6 +87,7 @@ function BackupManager(config) {
         var createDirectoriesResponse = me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
+		'yum -y install lftp',
 		'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
                 lftp.cmd([
                     "mkdir %(envName)",
