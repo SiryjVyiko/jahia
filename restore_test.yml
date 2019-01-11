@@ -18,6 +18,7 @@ onInstall:
         region: ${settings.targetRegion}
         settings:
           skipStart: 'true'
+          tag: '7.2.1.1'
     - install:
         jps: ${baseUrl}/restore_test.yml?_r=${fn.random}
         envName: ${settings.newEnvName}
