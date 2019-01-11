@@ -113,21 +113,6 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],
 	    [ me.cmd, [
-		'yum -y install lftp',
-                'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_cp',
-                lftp.cmd([
-                    "cd %(envName)/%(backupDir)/variables",
-                    "put variables_cp"
-                ])
-            ], {
-                nodeGroup: "cp",
-                envName : config.envName,
-                excludeListUrl: config.baseUrl + "/variables_exclude_list",
-                backupDir : backupDir
-            }],
-	    [ me.cmd, [
-		'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
                 lftp.cmd([
@@ -140,34 +125,6 @@ function BackupManager(config) {
                 excludeListUrl: config.baseUrl + "/variables_exclude_list",
                 backupDir : backupDir
             }],
-	    [ me.cmd, [
-		'yum -y install lftp',
-                'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_nosqldb',
-                lftp.cmd([
-                    "cd %(envName)/%(backupDir)/variables",
-                    "put variables_nosqldb"
-                ])
-            ], {
-                nodeGroup: "nosqldb",
-                envName : config.envName,
-                excludeListUrl: config.baseUrl + "/variables_exclude_list",
-                backupDir : backupDir
-            }],	
-	    [ me.cmd, [
-		'yum -y install lftp',
-                'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_unomi',
-                lftp.cmd([
-                    "cd %(envName)/%(backupDir)/variables",
-                    "put variables_unomi"
-                ])
-            ], {
-                nodeGroup: "unomi",
-                envName : config.envName,
-                excludeListUrl: config.baseUrl + "/variables_exclude_list",
-                backupDir : backupDir
-            }],	
             [ me.cmd, [
                 "CT='Content-Type:application/json'",
                 "curl -H $CT -X PUT -d '{\"type\":\"fs\",\"settings\":{\"location\":\"all\"}}' '%(elasticSearchUrl)'",
