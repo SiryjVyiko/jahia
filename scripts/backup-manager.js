@@ -96,7 +96,7 @@ function BackupManager(config) {
 		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
 		    "mkdir %(envName)",
-                    "mkdir %(envName)/%(backupDir)"
+                    "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "put jahia.sql",
