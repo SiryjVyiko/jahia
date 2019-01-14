@@ -19,7 +19,7 @@ actions:
   configureStorage:
     - script: |
         return jelastic.env.control.InstallSoftwarePackage('${env.envName}', session, 'storage', 'ftp', 'storage');
-    - cmd[storage]: wget -O /root/getBackups.sh ${baseUrl}/scripts/getBackups.sh; chmod +x /root/getBackups.sh;
+    - cmd[storage]: wget -O /root/getBackups.sh ${baseUrl}/scripts/getBackups.sh; wget -O /root/getVersion.sh ${baseUrl}/scripts/getVersion.sh; chmod +x /root/getBackups.sh /root/getVersion.sh; 
     - script: ${baseUrl}/scripts/createStorageApi.js?_r=${fn.random}
 success:
   text: FTP storage created successfully
