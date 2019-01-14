@@ -1,12 +1,12 @@
 //@auth
 
-var baseUrl = "${baseUrl}";
+var baseUrl = "https://raw.githubusercontent.com/SiryjVyiko/jahia/master";
 
 var storage = use("scripts/useStorageApi.js");
 
 var userData = storage.getUserData();
 var ftpUser = userData.credentials.ftpUser;
-return storage.getVersion(ftpUser, ${settings.envName}, ${settings.backupDir});
+return storage.getVersion(ftpUser, "env-6034", "2019-01-10T13:52:52-manual");
 
 function use(script) {
     var Transport = com.hivext.api.core.utils.Transport,
