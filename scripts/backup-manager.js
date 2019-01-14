@@ -92,6 +92,7 @@ function BackupManager(config) {
                     "mkdir %(envName)",	
                     "mkdir %(envName)/%(backupDir)"	
                 ]),
+		'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
                 'tar -zcf data.tar.gz /data',
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
@@ -103,7 +104,8 @@ function BackupManager(config) {
                     "put data.tar.gz",
                     "put jahia.sql",
 		    "mkdir variables",	
-		    "cd variables",	
+		    "cd variables",
+		    "put jahia_version",	
 		    "put variables_proc"
                 ])
             ], {
