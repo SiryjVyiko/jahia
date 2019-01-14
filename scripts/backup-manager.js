@@ -88,6 +88,10 @@ function BackupManager(config) {
             [ me.checkEnvStatus ],
             [ me.cmd, [
 		'yum -y install lftp',
+                lftp.cmd([	
+                    "mkdir %(envName)",	
+                    "mkdir %(envName)/%(backupDir)"	
+                ]),
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
                 'tar -zcf data.tar.gz /data',
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
@@ -95,8 +99,6 @@ function BackupManager(config) {
 		'wget -q %(excludeListUrl) -O variables_exclude_list',
 		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
-		    "mkdir %(envName)",
-                    "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "put jahia.sql",
