@@ -86,7 +86,7 @@ if (typeExists.result != 0) {
     }, "uid");
 }
 
-var scriptsToInstall = ["GetBackups", "GetEnvs", "GetUserData", "InitFtpCredentials", "lib/JahiaStorage", "SendBackupFailedEmail"],
+var scriptsToInstall = ["GetBackups", "GetEnvs", "GetUserData", "InitFtpCredentials", "lib/JahiaStorage", "SendBackupFailedEmail", "GetVersion"],
     script;
 for (var i = 0, n = scriptsToInstall.length; i < n; i++) {
     resp = createScript(scriptsToInstall[i]);
