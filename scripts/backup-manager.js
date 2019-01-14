@@ -91,32 +91,56 @@ function BackupManager(config) {
                     "mkdir %(envName)",
                     "mkdir %(envName)/%(backupDir)"
                 ]),
+		'yum -y install lftp',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
                 'tar -zcf data.tar.gz /data',
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false',
+		'wget -q %(excludeListUrl) -O variables_exclude_list',
+		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
-                    "put jahia.sql"
+                    "put jahia.sql",
+		    "mkdir variables",	
+		    "cd variables",	
+		    "put variables_proc"
                 ])
             ], {
                 nodeGroup : "proc",
                 envName : config.envName,
+		excludeListUrl: config.baseUrl + "/variables_exclude_list",
                 maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost }),
                 backupDir : backupDir
             }],
-
+	    [ me.cmd, [
+		'yum -y install lftp',
+                'wget -q %(excludeListUrl) -O variables_exclude_list',
+                'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
+                lftp.cmd([
+                    "cd %(envName)/%(backupDir)/variables",
+                    "put variables_sqldb"
+                ])
+            ], {
+                nodeGroup: "sqldb",
+                envName : config.envName,
+                excludeListUrl: config.baseUrl + "/variables_exclude_list",
+                backupDir : backupDir
+            }],
             [ me.cmd, [
+		'yum -y install lftp',
                 "CT='Content-Type:application/json'",
                 "curl -H $CT -X PUT -d '{\"type\":\"fs\",\"settings\":{\"location\":\"all\"}}' '%(elasticSearchUrl)'",
                 "curl -H $CT -X DELETE '%(elasticSearchUrl)/snapshot'",
                 "curl -H $CT -X PUT '%(elasticSearchUrl)/snapshot?wait_for_completion=true'",
                 "tar -zcf es.tar.gz /var/lib/elasticsearch/backup/*",
-
+		'wget -q %(excludeListUrl) -O variables_exclude_list',
+		'grep -v -f variables_exclude_list /.jelenv > variables_es',
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
-                    "put es.tar.gz"
+                    "put es.tar.gz",
+		    "cd variables",	
+		    "put variables_es"
                 ]),
                 'number_of_backups=$(' + lftp.cmd("ls %(envName)/") + '| wc -l)',
                 '[ "${number_of_backups}" -gt "%(backupCount)" ] && { let "number_for_deletion = ${number_of_backups} - %(backupCount)"; backups_for_deletion=$(' + lftp.cmd("ls %(envName)") + ' | awk \'{print $9}\'|head -$number_for_deletion ); } || true',
@@ -124,6 +148,7 @@ function BackupManager(config) {
             ], {
                 nodeGroup: "es",
                 envName : config.envName,
+		excludeListUrl: config.baseUrl + "/variables_exclude_list",
                 elasticSearchUrl : _("http://%(host):9200/_snapshot/all", { host : config.elasticSearchHost }),
                 backupCount : config.backupCount,
                 backupDir : backupDir
@@ -386,7 +411,7 @@ function BackupManager(config) {
             });
         }
 
-	this.getStorageAppid = function () {
+        this.getStorageAppid = function () {
             return storageAppid;
         };
 
