@@ -71,6 +71,17 @@ function JahiaStorage(appid, session, envName, nodeGroup) {
         };
     };
 
+    this.getJahiaVersion = function (userName, envName, backupName) {
+        resp = this.cmd(
+            "/root/getVersion.sh " + user + " " + environment + " " + backup
+        );
+
+        if (resp.result !== 0) return resp;
+        resp = this.toJSONObject(resp.responses[0].out);
+
+        return resp;
+    };
+
     this.toJSONObject = function (value) {
         return toNative(new JSONObject(String(value)));
     };

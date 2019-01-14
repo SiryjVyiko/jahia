@@ -16,6 +16,14 @@ function StorageApi(session, storageAppid, ftpHost) {
         });
     };
 
+    this.getVersion = function getVersion(envName) {
+        return this.eval("GetVersion", {
+	    userName: userName,
+            envName: envName,
+	    backupName: backupName
+        });
+    };
+
     this.initFtpCredentials = function initFtpCredentials() {
         return this.eval("InitFtpCredentials");
     };
