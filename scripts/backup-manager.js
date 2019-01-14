@@ -87,10 +87,6 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
-                lftp.cmd([
-                    "mkdir %(envName)",
-                    "mkdir %(envName)/%(backupDir)"
-                ]),
 		'yum -y install lftp',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
                 'tar -zcf data.tar.gz /data',
@@ -99,6 +95,8 @@ function BackupManager(config) {
 		'wget -q %(excludeListUrl) -O variables_exclude_list',
 		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
+		    "mkdir %(envName)",
+                    "mkdir %(envName)/%(backupDir)"
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "put jahia.sql",
