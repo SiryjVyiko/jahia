@@ -1,0 +1,6 @@
+//@auth
+//@req(userName, envName, backupName)
+
+include_once com.hivext.scripting.lib.JahiaStorage;
+
+hivext.local.ReturnResult(new JahiaStorage(appid, session, "jahia-storage").getJahiaVersion(userName, envName, backupName));

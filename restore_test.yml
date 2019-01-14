@@ -12,13 +12,15 @@ onBeforeInit: https://raw.githubusercontent.com/SiryjVyiko/jahia/master/scripts/
 
 onInstall:
   - if (settings.envCreated != 'true'):
+    - script: |
+        return { result: 0, version: "7.3.0.0" }
     - install:
         jps: ${baseUrl}/cluster.yml?_r=${fn.random}
         envName: ${settings.newEnvName}
         region: ${settings.targetRegion}
         settings:
           skipStart: 'true'
-          tag: '7.2.1.1'
+          tag: ${response.version}
     - install:
         jps: ${baseUrl}/restore_test.yml?_r=${fn.random}
         envName: ${settings.newEnvName}
