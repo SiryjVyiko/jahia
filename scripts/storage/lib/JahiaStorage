@@ -73,7 +73,7 @@ function JahiaStorage(appid, session, envName, nodeGroup) {
 
     this.getJahiaVersion = function (userName, envName, backupName) {
         resp = this.cmd(
-	    "/root/getVersion.sh " + userName + " " + userName + " " + backupName
+	    "/root/getVersion.sh " + userName + " " + envName + " " + backupName
         );
 
         if (resp.result !== 0) return resp;
