@@ -77,6 +77,7 @@ function BackupManager(config) {
 
     me.backup = function () {
         var backupDir = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date()),
+	    var excludeListUrl =  me.getFileUrl("configs/variables_exclude_list"),
             lftp = new Lftp(config.ftpHost, config.ftpUser, config.ftpPassword),
             isManual = !getParam("task");
 
@@ -111,7 +112,7 @@ function BackupManager(config) {
             ], {
                 nodeGroup : "proc",
                 envName : config.envName,
-		excludeListUrl: config.baseUrl + "/configs/variables_exclude_list",
+		excludeListUrl: excludeListUrl,
                 maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost }),
                 backupDir : backupDir
             }],
@@ -126,7 +127,7 @@ function BackupManager(config) {
             ], {
                 nodeGroup: "sqldb",
                 envName : config.envName,
-                excludeListUrl: config.baseUrl + "/configs/variables_exclude_list",
+                excludeListUrl: excludeListUrl,
                 backupDir : backupDir
             }],
             [ me.cmd, [
@@ -150,7 +151,7 @@ function BackupManager(config) {
             ], {
                 nodeGroup: "es",
                 envName : config.envName,
-		excludeListUrl: config.baseUrl + "/configs/variables_exclude_list",
+		excludeListUrl: excludeListUrl,
                 elasticSearchUrl : _("http://%(host):9200/_snapshot/all", { host : config.elasticSearchHost }),
                 backupCount : config.backupCount,
                 backupDir : backupDir
