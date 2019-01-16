@@ -381,7 +381,6 @@ function BackupManager(config) {
      * @param session
      * @param [storageAppid]
      * @param [ftpHost]
-     * @param [errorEmailAddress]
      * @constructor
      */
     function StorageApi(session, storageAppid, ftpHost, errorEmailAddress) {
@@ -408,7 +407,6 @@ function BackupManager(config) {
         this.sendBackupFailedEmail = function sendBackupFailedEmail(envDomain, message) {
 	    return this.eval("SendBackupFailedEmail", {
                 envDomain: envDomain,
-		errorEmailAddress: errorEmailAddress,
 		message: message
             });
         }
@@ -419,10 +417,6 @@ function BackupManager(config) {
 
         this.getFtpHost = function getFtpHost() {
             return ftpHost;
-        };
-
-        this.getErrorEmailAddress = function getErrorEmailAddress() {
-            return errorEmailAddress;
         };
 
         this.eval = function (method, params) {
@@ -439,13 +433,13 @@ function BackupManager(config) {
 
         this.initSettings = function () {
             var resp = jelastic.development.scripting.Eval(appid + "/settings", session, "GetSettings", {
-                settings : "JAHIA_STORAGE_APPID,JAHIA_STORAGE_FTP_HOST,JAHIA_STORAGE_ERROR_EMAIL"
+                settings : "JAHIA_STORAGE_APPID,JAHIA_STORAGE_FTP_HOST"
             });
 
             resp = resp.response || resp;
 
             if (resp.result !== 0) {
-                throw new Error("Cannot get settings [JAHIA_STORAGE_APPID, JAHIA_STORAGE_FTP_HOST, JAHIA_STORAGE_ERROR_EMAIL]: " + toJSON(resp));
+                throw new Error("Cannot get settings [JAHIA_STORAGE_APPID, JAHIA_STORAGE_FTP_HOST]: " + toJSON(resp));
             }
 
             if (!storageAppid) {
@@ -464,12 +458,6 @@ function BackupManager(config) {
                 }
             }
 
-            if (!errorEmailAddress) {
-                errorEmailAddress = resp.settings.JAHIA_STORAGE_ERROR_EMAIL;
-
-                if (!errorEmailAddress) {
-                    errorEmailAddress = "jahia.support@jelastic.com";
-                }
             }
         };
 

@@ -1,8 +1,20 @@
 //@auth
-//@req(envDomain, errorEmailAddress, message)
+//@req(envDomain, message)
 
-var email = errorEmailAddress,
-    title = "Backup failed for " + envDomain,
+var email;
+var resp = jelastic.development.scripting.Eval(appid + "/settings", session, "GetSettings", {
+    settings: "JAHIA_STORAGE_ERROR_EMAIL"
+});
+
+resp = resp.response || resp;
+
+if (resp.result !== 0) {
+    email = "jahia.support@jelastic.com";
+}
+
+email = resp.settings.JAHIA_STORAGE_ERROR_EMAIL;
+
+var title = "Backup failed for " + envDomain,
     text = "Jahia backup failed for the environment " + envDomain + " of " + user.email + " with error message " + message;
 
 try {
