@@ -381,9 +381,10 @@ function BackupManager(config) {
      * @param session
      * @param [storageAppid]
      * @param [ftpHost]
+     * @param [errorEmailAddress]
      * @constructor
      */
-    function StorageApi(session, storageAppid, ftpHost) {
+    function StorageApi(session, storageAppid, ftpHost, errorEmailAddress) {
         var SOURCE = "remote-storage";
 
         this.getUserData = function getUserData() {
@@ -419,6 +420,10 @@ function BackupManager(config) {
 
         this.getFtpHost = function getFtpHost() {
             return ftpHost;
+        };
+
+        this.getErrorEmailAddress = function getErrorEmailAddress() {
+            return errorEmailAddress;
         };
 
         this.eval = function (method, params) {
