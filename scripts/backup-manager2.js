@@ -86,7 +86,6 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
-                'yum -y install lftp',
                 lftp.cmd([	
                     "mkdir %(envName)",	
                     "mkdir %(envName)/%(backupDir)"	
@@ -309,7 +308,7 @@ function BackupManager(config) {
         if (resp.result != 0) {
             var userEmailAddress = jelastic.users.account.GetUserInfo( appid, session ).email;
             jelastic.environment.jerror.jerror(appid, 'jahiaBackup', config.envName, userEmailAddress, resp.result, resp.responses, 'high');
-            var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envName, userEmailAddress, resp.responses);
+            var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envName, userEmailAddress, errorEmailAddress, resp.responses);
         }
 	    
         return resp;
@@ -405,10 +404,11 @@ function BackupManager(config) {
             return this.eval("InitFtpCredentials");
         };
 
-        this.sendBackupFailedEmail = function sendBackupFailedEmail(envDomain, email, message) {
+        this.sendBackupFailedEmail = function sendBackupFailedEmail(envDomain, email, errorEmailAddress, message) {
 	    return this.eval("SendBackupFailedEmail", {
                 envDomain: envDomain,
 		userEmail: email,
+		errorEmailAddress: errorEmailAddress,
 		message: message
             });
         }
