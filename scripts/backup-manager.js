@@ -86,7 +86,6 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
-                'yum -y install lftp',
                 lftp.cmd([	
                     "mkdir %(envName)",	
                     "mkdir %(envName)/%(backupDir)"	
@@ -382,9 +381,10 @@ function BackupManager(config) {
      * @param session
      * @param [storageAppid]
      * @param [ftpHost]
+     * @param [errorEmailAddress]
      * @constructor
      */
-    function StorageApi(session, storageAppid, ftpHost) {
+    function StorageApi(session, storageAppid, ftpHost, errorEmailAddress) {
         var SOURCE = "remote-storage";
 
         this.getUserData = function getUserData() {
@@ -409,6 +409,7 @@ function BackupManager(config) {
 	    return this.eval("SendBackupFailedEmail", {
                 envDomain: envDomain,
 		userEmail: email,
+		errorEmailAddress: errorEmailAddress,
 		message: message
             });
         }
@@ -419,6 +420,10 @@ function BackupManager(config) {
 
         this.getFtpHost = function getFtpHost() {
             return ftpHost;
+        };
+
+        this.getErrorEmailAddress = function getErrorEmailAddress() {
+            return errorEmailAddress;
         };
 
         this.eval = function (method, params) {

@@ -1,7 +1,7 @@
 //@auth
-//@req(envDomain, userEmail, message)
+//@req(envDomain, userEmail, errorEmailAddress, message)
 
-var email = "jahia.support@jelastic.com",
+var email = errorEmailAddress,
     title = "Backup failed for " + envDomain,
     text = "Jahia backup failed for the environment " + envDomain + " of " + userEmail + " with error message " + message;
 
