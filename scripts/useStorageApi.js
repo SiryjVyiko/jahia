@@ -1,4 +1,4 @@
-function StorageApi(session, storageAppid, ftpHost) {
+function StorageApi(session, storageAppid, ftpHost, errorEmailAddress) {
     
     var SOURCE = "remote-storage";
 
