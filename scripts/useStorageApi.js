@@ -50,13 +50,13 @@ function StorageApi(session, storageAppid, ftpHost) {
 
     this.initSettings = function () {
         var resp = jelastic.development.scripting.Eval(appid + "/settings", session, "GetSettings", {
-            settings : "JAHIA_STORAGE_APPID,JAHIA_STORAGE_FTP_HOST"
+            settings : "JAHIA_STORAGE_APPID,JAHIA_STORAGE_FTP_HOST,JAHIA_STORAGE_ERROR_EMAIL"
         });
 
         resp = resp.response || resp;
 
         if (resp.result !== 0) {
-            throw new Error("Cannot get settings [JAHIA_STORAGE_APPID, JAHIA_STORAGE_FTP_HOST]: " + toJSON(resp));
+            throw new Error("Cannot get settings [JAHIA_STORAGE_APPID, JAHIA_STORAGE_FTP_HOST, JAHIA_STORAGE_ERROR_EMAIL]: " + toJSON(resp));
         }
 
         if (!storageAppid) {
@@ -72,6 +72,14 @@ function StorageApi(session, storageAppid, ftpHost) {
 
             if (!ftpHost) {
                 throw new Error("JAHIA_STORAGE_FTP_HOST setting not found");
+            }
+        }
+
+        if (!errorEmailAddress) {
+            errorEmailAddress = resp.settings.JAHIA_STORAGE_ERROR_EMAIL;
+
+            if (!errorEmailAddress) {
+                errorEmailAddress = "jahia.support@jelastic.com";
             }
         }
     };
