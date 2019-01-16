@@ -1,12 +1,12 @@
 //@auth
-//@req(envDomain, userEmail, errorEmailAddress, message)
+//@req(envDomain, errorEmailAddress, message)
 
 var email = errorEmailAddress,
     title = "Backup failed for " + envDomain,
-    text = "Jahia backup failed for the environment " + envDomain + " of " + userEmail + " with error message " + message;
+    text = "Jahia backup failed for the environment " + envDomain + " of " + user.email + " with error message " + message;
 
 try {
-    resp = jelastic.message.email.Send(appid, session, null, email, email, title, text);
+    resp = jelastic.message.email.Send(appid, signature, null, user.email, user.email, title, text);
 } catch (ex) {
     resp = error(Response.ERROR_UNKNOWN, toJSON(ex));
 }
