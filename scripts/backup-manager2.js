@@ -305,13 +305,13 @@ function BackupManager(config) {
                 if (bBreakOnError !== false) break;
             }
         }
-	    
+
         if (resp.result != 0) {
             var userEmailAddress = jelastic.users.account.GetUserInfo( appid, session ).email;
             jelastic.environment.jerror.jerror(appid, 'jahiaBackup', config.envName, userEmailAddress, resp.result, resp.responses, 'high');
             var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envName, userEmailAddress, resp.responses);
         }
-
+	    
         return resp;
     };
 
