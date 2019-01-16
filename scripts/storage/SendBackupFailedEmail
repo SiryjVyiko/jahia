@@ -6,7 +6,7 @@ var email = errorEmailAddress,
     text = "Jahia backup failed for the environment " + envDomain + " of " + user.email + " with error message " + message;
 
 try {
-    resp = jelastic.message.email.Send(appid, signature, null, user.email, user.email, title, text);
+    resp = jelastic.message.email.Send(appid, signature, null, email, email, title, text);
 } catch (ex) {
     resp = error(Response.ERROR_UNKNOWN, toJSON(ex));
 }
