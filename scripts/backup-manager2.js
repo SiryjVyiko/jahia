@@ -408,7 +408,7 @@ function BackupManager(config) {
         this.sendBackupFailedEmail = function sendBackupFailedEmail(envDomain, email, message) {
 	    return this.eval("SendBackupFailedEmail", {
                 envDomain: envDomain,
-		email: email,
+		userEmail: email,
 		message: message
             });
         }
