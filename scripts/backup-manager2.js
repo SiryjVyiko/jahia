@@ -77,7 +77,7 @@ function BackupManager(config) {
 
     me.backup = function () {
         var backupDir = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date()),
-	    var excludeListUrl =  me.getFileUrl("configs/variables_exclude_list"),
+	    excludeListUrl =  me.getFileUrl("configs/variables_exclude_list"),
             lftp = new Lftp(config.ftpHost, config.ftpUser, config.ftpPassword),
             isManual = !getParam("task");
 
