@@ -97,6 +97,8 @@ resp = setJahiaSystemProperty("JAHIA_STORAGE_FTP_HOST", storageApplicationIp);
 if (resp.result != 0) return resp;
 resp = setJahiaSystemProperty("JAHIA_STORAGE_APPID", storageApplicationId);
 if (resp.result != 0) return resp;
+resp = setJahiaSystemProperty("JAHIA_STORAGE_ERROR_EMAIL", "jahia.support@jelastic.com");
+if (resp.result != 0) return resp;
 
 return {
     result: 0
