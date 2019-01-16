@@ -9,8 +9,6 @@ function BackupManager(config) {
      *  scriptName : {String}
      *  envName : {String}
      *  envAppid : {String}
-     *  envDomain : {String}
-     *  email : {String}
      *  maintenanceHost : {String}
      *  elasticSearchHost : {String}
      *  ftpHost : {String}
@@ -88,16 +86,16 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
-		'yum -y install lftp',
+                'yum -y install lftp',
                 lftp.cmd([	
                     "mkdir %(envName)",	
                     "mkdir %(envName)/%(backupDir)"	
                 ]),
 		'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true || true',
                 'tar -zcf data.tar.gz /data',
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false',
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true',
 		'wget -q %(excludeListUrl) -O variables_exclude_list',
 		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
@@ -131,7 +129,7 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],
             [ me.cmd, [
-		'yum -y install lftp',
+                'yum -y install lftp',
                 "CT='Content-Type:application/json'",
                 "curl -H $CT -X PUT -d '{\"type\":\"fs\",\"settings\":{\"location\":\"all\"}}' '%(elasticSearchUrl)'",
                 "curl -H $CT -X DELETE '%(elasticSearchUrl)/snapshot'",
@@ -307,12 +305,13 @@ function BackupManager(config) {
                 if (bBreakOnError !== false) break;
             }
         }
-	    
-	if (resp.result != 0) {
-            jelastic.environment.jerror.jerror(appid, 'jahiaBackup', config.envName, config.email, resp.result, resp.responses, 'high');
-	    var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envDomain, config.email, resp.responses);
-        }
 
+        if (resp.result != 0) {
+            var userEmailAddress = jelastic.users.account.GetUserInfo( appid, session ).email;
+            jelastic.environment.jerror.jerror(appid, 'jahiaBackup', config.envName, userEmailAddress, resp.result, resp.responses, 'high');
+            var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envName, userEmailAddress, resp.responses);
+        }
+	    
         return resp;
     };
 
@@ -409,7 +408,7 @@ function BackupManager(config) {
         this.sendBackupFailedEmail = function sendBackupFailedEmail(envDomain, email, message) {
 	    return this.eval("SendBackupFailedEmail", {
                 envDomain: envDomain,
-		email: email,
+		userEmail: email,
 		message: message
             });
         }

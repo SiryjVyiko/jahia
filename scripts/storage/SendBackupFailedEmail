@@ -1,9 +1,9 @@
 //@auth
-//@req(envDomain, email, message)
+//@req(envDomain, userEmail, message)
 
 var email = "jahia.support@jelastic.com",
     title = "Backup failed for " + envDomain,
-    text = "Jahia backup failed for the environment " + envDomain + " of " + email + " with error message " + message;
+    text = "Jahia backup failed for the environment " + envDomain + " of " + userEmail + " with error message " + message;
 
 try {
     resp = jelastic.message.email.Send(appid, session, null, email, email, title, text);

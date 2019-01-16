@@ -86,15 +86,16 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
+                'yum -y install lftp',
                 lftp.cmd([	
                     "mkdir %(envName)",	
                     "mkdir %(envName)/%(backupDir)"	
                 ]),
 		'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true',
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true || true',
                 'tar -zcf data.tar.gz /data',
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false',
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true',
 		'wget -q %(excludeListUrl) -O variables_exclude_list',
 		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
@@ -128,6 +129,7 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],
             [ me.cmd, [
+                'yum -y install lftp',
                 "CT='Content-Type:application/json'",
                 "curl -H $CT -X PUT -d '{\"type\":\"fs\",\"settings\":{\"location\":\"all\"}}' '%(elasticSearchUrl)'",
                 "curl -H $CT -X DELETE '%(elasticSearchUrl)/snapshot'",

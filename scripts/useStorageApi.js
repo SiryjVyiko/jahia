@@ -50,7 +50,7 @@ function StorageApi(session, storageAppid, ftpHost) {
 
     this.initSettings = function () {
         var resp = jelastic.development.scripting.Eval(appid + "/settings", session, "GetSettings", {
-            settings: "JAHIA_STORAGE_APPID,JAHIA_STORAGE_FTP_HOST"
+            settings : "JAHIA_STORAGE_APPID,JAHIA_STORAGE_FTP_HOST"
         });
 
         resp = resp.response || resp;
