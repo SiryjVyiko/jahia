@@ -458,7 +458,6 @@ function BackupManager(config) {
                 }
             }
 
-            }
         };
 
         this.initSettings();
