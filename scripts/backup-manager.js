@@ -383,7 +383,7 @@ function BackupManager(config) {
      * @param [ftpHost]
      * @constructor
      */
-    function StorageApi(session, storageAppid, ftpHost, errorEmailAddress) {
+    function StorageApi(session, storageAppid, ftpHost) {
         var SOURCE = "remote-storage";
 
         this.getUserData = function getUserData() {
