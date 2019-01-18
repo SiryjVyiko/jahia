@@ -86,6 +86,7 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
+		'yum -y install lftp',
                 lftp.cmd([	
                     "mkdir %(envName)",	
                     "mkdir %(envName)/%(backupDir)"	
