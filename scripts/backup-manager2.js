@@ -87,10 +87,6 @@ function BackupManager(config) {
             [ me.checkEnvStatus ],
             [ me.cmd, [
                 'yum -y install lftp',
-                lftp.cmd([
-                    "mkdir %(envName)",
-                    "mkdir %(envName)/%(backupDir)"
-                ]),
                 'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true || true',
                 'tar -zcf data.tar.gz /data',
@@ -98,6 +94,8 @@ function BackupManager(config) {
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_proc',
                 lftp.cmd([
+                    "mkdir %(envName)",
+                    "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "mkdir variables",
