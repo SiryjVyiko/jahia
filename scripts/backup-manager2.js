@@ -1,4 +1,4 @@
-function BackupManager(config) {
+function BackupManager(config) {                                                                                                                                                                                                            
     /**
      * Implements backup management of the Jahia environment
      * @param {{
@@ -99,17 +99,17 @@ function BackupManager(config) {
             }],
             [ me.cmd, [
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
-		'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
             ], {
                 nodeGroup: "proc",
-		maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
+                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }],
-	    [ me.cmd, [
+            [ me.cmd, [
                 lftp.cmd([
                     "mkdir %(envName)",
                     "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
-		    "put jahia.sql",
+                    "put jahia.sql",
                     "put data.tar.gz",
                     "mkdir variables",
                     "cd variables",
@@ -143,6 +143,12 @@ function BackupManager(config) {
                 "tar -zcf es.tar.gz /var/lib/elasticsearch/backup/*",
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_es',
+            ], {
+                nodeGroup: "es",
+                excludeListUrl: excludeListUrl,
+                elasticSearchUrl : _("http://%(host):9200/_snapshot/all", { host : config.elasticSearchHost }),
+            }],
+            [ me.cmd, [
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put es.tar.gz",
@@ -155,8 +161,6 @@ function BackupManager(config) {
             ], {
                 nodeGroup: "es",
                 envName : config.envName,
-                excludeListUrl: excludeListUrl,
-                elasticSearchUrl : _("http://%(host):9200/_snapshot/all", { host : config.elasticSearchHost }),
                 backupCount : config.backupCount,
                 backupDir : backupDir
             }]
