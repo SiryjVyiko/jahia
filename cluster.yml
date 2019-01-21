@@ -87,7 +87,7 @@ nodes:
 
 
   - nodeType: mariadb-dockerized
-    tag: 10.2.12
+    tag: 10.3.11
     displayName: MariaDB
     count: 1
     cloudlets: 64

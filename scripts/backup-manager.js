@@ -1,4 +1,4 @@
-function BackupManager(config) {
+function BackupManager(config) {                                                                                                                                                                                                            
     /**
      * Implements backup management of the Jahia environment
      * @param {{
@@ -75,7 +75,7 @@ function BackupManager(config) {
 
     me.backup = function () {
         var backupDir = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(new Date()),
-	    excludeListUrl =  me.getFileUrl("configs/variables_exclude_list"),
+            excludeListUrl =  me.getFileUrl("configs/variables_exclude_list"),
             lftp = new Lftp(config.ftpHost, config.ftpUser, config.ftpPassword),
             isManual = !getParam("task");
 
@@ -86,36 +86,42 @@ function BackupManager(config) {
         return me.exec([
             [ me.checkEnvStatus ],
             [ me.cmd, [
-		'yum -y install lftp',
-                lftp.cmd([	
-                    "mkdir %(envName)",	
-                    "mkdir %(envName)/%(backupDir)"	
-                ]),
-		'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
+                'yum -y install lftp',
+                'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true || true',
                 'tar -zcf data.tar.gz /data',
+                'wget -q %(excludeListUrl) -O variables_exclude_list',
+                'grep -v -f variables_exclude_list /.jelenv > variables_proc'
+            ], {
+                nodeGroup : "proc",
+                excludeListUrl: excludeListUrl,
+                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
+            }],
+            [ me.cmd, [
                 'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true',
-		'wget -q %(excludeListUrl) -O variables_exclude_list',
-		'grep -v -f variables_exclude_list /.jelenv > variables_proc',
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
+            ], {
+                nodeGroup: "proc",
+                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
+            }],
+            [ me.cmd, [
                 lftp.cmd([
+                    "mkdir %(envName)",
+                    "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
-                    "put data.tar.gz",
                     "put jahia.sql",
-		    "mkdir variables",	
-		    "cd variables",
-		    "put jahia_version",	
-		    "put variables_proc"
+                    "put data.tar.gz",
+                    "mkdir variables",
+                    "cd variables",
+                    "put jahia_version",
+                    "put variables_proc"
                 ])
             ], {
                 nodeGroup : "proc",
                 envName : config.envName,
-		excludeListUrl: excludeListUrl,
-                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost }),
                 backupDir : backupDir
             }],
-	    [ me.cmd, [
-		'yum -y install lftp',
+            [ me.cmd, [
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
                 lftp.cmd([
@@ -123,7 +129,7 @@ function BackupManager(config) {
                     "put variables_sqldb"
                 ])
             ], {
-                nodeGroup: "sqldb",
+                nodeGroup: "proc",
                 envName : config.envName,
                 excludeListUrl: excludeListUrl,
                 backupDir : backupDir
@@ -135,13 +141,19 @@ function BackupManager(config) {
                 "curl -H $CT -X DELETE '%(elasticSearchUrl)/snapshot'",
                 "curl -H $CT -X PUT '%(elasticSearchUrl)/snapshot?wait_for_completion=true'",
                 "tar -zcf es.tar.gz /var/lib/elasticsearch/backup/*",
-		'wget -q %(excludeListUrl) -O variables_exclude_list',
-		'grep -v -f variables_exclude_list /.jelenv > variables_es',
+                'wget -q %(excludeListUrl) -O variables_exclude_list',
+                'grep -v -f variables_exclude_list /.jelenv > variables_es',
+            ], {
+                nodeGroup: "es",
+                excludeListUrl: excludeListUrl,
+                elasticSearchUrl : _("http://%(host):9200/_snapshot/all", { host : config.elasticSearchHost }),
+            }],
+            [ me.cmd, [
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put es.tar.gz",
-		    "cd variables",	
-		    "put variables_es"
+                    "cd variables",
+                    "put variables_es"
                 ]),
                 'number_of_backups=$(' + lftp.cmd("ls %(envName)/") + '| wc -l)',
                 '[ "${number_of_backups}" -gt "%(backupCount)" ] && { let "number_for_deletion = ${number_of_backups} - %(backupCount)"; backups_for_deletion=$(' + lftp.cmd("ls %(envName)") + ' | awk \'{print $9}\'|head -$number_for_deletion ); } || true',
@@ -149,8 +161,6 @@ function BackupManager(config) {
             ], {
                 nodeGroup: "es",
                 envName : config.envName,
-		excludeListUrl: excludeListUrl,
-                elasticSearchUrl : _("http://%(host):9200/_snapshot/all", { host : config.elasticSearchHost }),
                 backupCount : config.backupCount,
                 backupDir : backupDir
             }]
@@ -177,13 +187,13 @@ function BackupManager(config) {
     };
 
     me.initFtpCredentials = function initFtpCredentials() {
-	    var resp = new StorageApi(session).initFtpCredentials();
-	    var credentials = resp.credentials || {};
+            var resp = new StorageApi(session).initFtpCredentials();
+            var credentials = resp.credentials || {};
 
-	    config.ftpUser = credentials.ftpUser;
-	    config.ftpPassword = credentials.ftpPassword;
+            config.ftpUser = credentials.ftpUser;
+            config.ftpPassword = credentials.ftpPassword;
 
-	    return resp;
+            return resp;
     };
 
     me.createScript = function createScript() {
@@ -311,7 +321,7 @@ function BackupManager(config) {
             jelastic.environment.jerror.jerror(appid, 'jahiaBackup', config.envName, userEmailAddress, resp.result, resp.responses, 'high');
             var errorEmail = new StorageApi(session).sendBackupFailedEmail(config.envName, resp.responses);
         }
-	    
+            
         return resp;
     };
 
@@ -406,9 +416,9 @@ function BackupManager(config) {
         };
 
         this.sendBackupFailedEmail = function sendBackupFailedEmail(envDomain, message) {
-	    return this.eval("SendBackupFailedEmail", {
+            return this.eval("SendBackupFailedEmail", {
                 envDomain: envDomain,
-		message: message
+                message: message
             });
         }
 
