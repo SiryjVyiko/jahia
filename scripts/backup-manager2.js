@@ -90,13 +90,26 @@ function BackupManager(config) {
                 'ls -1 /opt/tomcat/webapps/ROOT/WEB-INF/karaf/system/org/jahia/features/dx-core/| tail -n 1 > jahia_version',
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true || true',
                 'tar -zcf data.tar.gz /data',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_proc',
+                'grep -v -f variables_exclude_list /.jelenv > variables_proc'
+            ], {
+                nodeGroup : "proc",
+                excludeListUrl: excludeListUrl,
+                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
+            }],
+            [ me.cmd, [
+                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
+		'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
+            ], {
+                nodeGroup: "proc",
+		maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
+            }],
+	    [ me.cmd, [
                 lftp.cmd([
                     "mkdir %(envName)",
                     "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
+		    "put jahia.sql",
                     "put data.tar.gz",
                     "mkdir variables",
                     "cd variables",
@@ -106,32 +119,20 @@ function BackupManager(config) {
             ], {
                 nodeGroup : "proc",
                 envName : config.envName,
-                excludeListUrl: excludeListUrl,
-                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost }),
                 backupDir : backupDir
             }],
             [ me.cmd, [
-                'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
-                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h localhost --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 lftp.cmd([
-                    "cd %(envName)/%(backupDir)",
-                    "put jahia.sql",
-                    "cd variables",
+                    "cd %(envName)/%(backupDir)/variables",
                     "put variables_sqldb"
                 ])
             ], {
-                nodeGroup: "sqldb",
+                nodeGroup: "proc",
                 envName : config.envName,
                 excludeListUrl: excludeListUrl,
                 backupDir : backupDir
-            }],
-            [ me.cmd, [
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true',
-            ], {
-                nodeGroup: "proc",
-                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }],
             [ me.cmd, [
                 'yum -y install lftp',
