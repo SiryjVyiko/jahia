@@ -79,7 +79,7 @@ nodes:
       XMS: ${globals.xms}
       _JAVA_OPTIONS: ${globals.java_opts}
 
-  - image: jelastic/redis:4.0.9
+  - image: jelastic/redis:5.0.3
     displayName: Sessions 
     count: 1
     cloudlets: 64
