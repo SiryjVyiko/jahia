@@ -9,7 +9,7 @@ resp=$(mysql -u$user -p$pswd mysql --execute="SHOW COLUMNS FROM user")
         service mysql stop;
         mysqld_safe --skip-grant-tables --user=mysql --pid-file=/var/lib/mysql/$(hostname).pid &
         sleep 5
-        cmd="CREATE TEMPORARY TABLE tmptable SELECT * FROM user WHERE User = 'root'; UPDATE tmptable SET User = '$user' WHERE User = 'root'; DELETE FROM user WHERE User = '$user'; INSERT INTO user SELECT * FROM tmptable WHERE User = '$user'; DROP TABLE tmptable;"
+        cmd="CREATE TEMPORARY TABLE tmptable SELECT * FROM user WHERE User = 'root'; UPDATE tmptable SET User = '$user' WHERE User = 'root'; DELETE FROM user WHERE User = '$user'; INSERT INTO user SELECT * FROM tmptable WHERE User = '$user'; DROP TABLE tmptable; REPAIR TABLE user;"
         mysql mysql --execute="$cmd"
 
         version=$(mysql --version|awk '{ print $5 }'|awk -F\, '{ print $1 }')
