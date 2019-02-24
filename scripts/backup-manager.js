@@ -129,7 +129,7 @@ function BackupManager(config) {
                     "put variables_sqldb"
                 ])
             ], {
-                nodeGroup: "proc",
+                nodeGroup: "sqldb",
                 envName : config.envName,
                 excludeListUrl: excludeListUrl,
                 backupDir : backupDir
