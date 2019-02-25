@@ -122,6 +122,7 @@ function BackupManager(config) {
                 backupDir : backupDir
             }],
             [ me.cmd, [
+                'yum -y install lftp',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
                 lftp.cmd([
