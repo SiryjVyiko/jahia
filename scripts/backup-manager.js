@@ -91,7 +91,8 @@ function BackupManager(config) {
                 'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=true || true',
                 'tar -zcf data.tar.gz /data',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
-                'grep -v -f variables_exclude_list /.jelenv > variables_proc'
+                'grep -v -f variables_exclude_list /.jelenv > variables_proc',
+                'grep -e "^XMS" -e "^_JAVA_OPTIONS" /.jelenv > variables_cp'
             ], {
                 nodeGroup : "proc",
                 excludeListUrl: excludeListUrl,
@@ -114,7 +115,8 @@ function BackupManager(config) {
                     "mkdir variables",
                     "cd variables",
                     "put jahia_version",
-                    "put variables_proc"
+                    "put variables_proc",
+                    "put variables_cp"
                 ])
             ], {
                 nodeGroup : "proc",
