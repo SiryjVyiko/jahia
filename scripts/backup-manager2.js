@@ -255,12 +255,11 @@ function BackupManager(config) {
 
         var tasks = resp.objects;
 
-	return tasks;
 
         for (var i = tasks.length; i--;) {
             if (tasks[i].script == config.scriptName) {
                 resp = jelastic.utils.scheduler.RemoveTask(envAppid, session, tasks[i].id);
-
+		return resp;
                 if (resp.result != 0) return resp;
             }
         }
