@@ -250,11 +250,12 @@ function BackupManager(config) {
     me.clearScheduledBackups = function clearScheduledBackups() {
         var envAppid = config.envAppid,
             resp = jelastic.utils.scheduler.GetTasks(envAppid, session);
-	    return resp;
 
         if (resp.result != 0) return resp;
 
         var tasks = resp.objects;
+
+	return tasks;
 
         for (var i = tasks.length; i--;) {
             if (tasks[i].script == config.scriptName) {
