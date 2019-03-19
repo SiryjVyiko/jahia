@@ -78,10 +78,10 @@ onInstall:
     ftpHost: ${settings.ftpHost}
 
 onUninstall:
-  uninstallBackupScript
+- callScript: uninstall
   
 onBeforeDelete:
-  uninstallBackupScript
+- callScript: uninstall
 
 onAfterRedeployContainer[proc]:
 - cmd [proc]: yum -y install lftp
@@ -106,11 +106,6 @@ actions:
       cronTime: ${this.cronTime}
       backupCount: ${this.backupCount}
       ftpHost: ${this.ftpHost}
-      
-  uninstallBackupScript:
-    - callScript: uninstall
-    - jelastic.dev.scripting.DeleteScript:
-        name: ${env.envName}-${globals.scriptSufix}
 
   callScript:
     script: |-
