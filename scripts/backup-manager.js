@@ -99,10 +99,18 @@ function BackupManager(config) {
                 maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }],
             [ me.cmd, [
+                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
+            ], {
+                nodeGroup: "proc",
+                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
+            }],
+            [ me.cmd, [
                 lftp.cmd([
-                    "mkdir -p %(envName)",
-                    "mkdir -p %(envName)/%(backupDir)",
+                    "mkdir %(envName)",
+                    "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
+                    "put jahia.sql",
                     "put data.tar.gz",
                     "mkdir variables",
                     "cd variables",
@@ -117,12 +125,9 @@ function BackupManager(config) {
             }],
             [ me.cmd, [
                 'yum -y install lftp',
-                'mysqldump --user=jahia-db-5335369 --password=F9INIxoEatQghgp29SE0 --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
                 lftp.cmd([
-                    "cd %(envName)/%(backupDir)",
-                    "put jahia.sql",
                     "cd %(envName)/%(backupDir)/variables",
                     "put variables_sqldb"
                 ])
@@ -161,14 +166,7 @@ function BackupManager(config) {
                 envName : config.envName,
                 backupCount : config.backupCount,
                 backupDir : backupDir
-            }],
-            [ me.cmd, [
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
-            ], {
-                nodeGroup: "proc",
-                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }]
-
         ]);
     };
 
