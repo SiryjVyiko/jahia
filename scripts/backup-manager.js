@@ -100,8 +100,8 @@ function BackupManager(config) {
             }],
             [ me.cmd, [
                 lftp.cmd([
-                    "mkdir %(envName)",
-                    "mkdir %(envName)/%(backupDir)",
+                    "mkdir -p %(envName)",
+                    "mkdir -p %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "mkdir variables",
