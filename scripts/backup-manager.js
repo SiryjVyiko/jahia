@@ -99,8 +99,7 @@ function BackupManager(config) {
                 maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }],
             [ me.cmd, [
-                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
+                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql'
             ], {
                 nodeGroup: "proc",
                 maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
@@ -166,6 +165,12 @@ function BackupManager(config) {
                 envName : config.envName,
                 backupCount : config.backupCount,
                 backupDir : backupDir
+            }],
+            [ me.cmd, [
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
+            ], {
+                nodeGroup: "proc",
+                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }]
         ]);
     };
