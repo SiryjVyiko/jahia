@@ -117,8 +117,8 @@ function BackupManager(config) {
             }],
             [ me.cmd, [
                 'yum -y install lftp',
-                'DB_USER=$(' + lftp.cmd("ls %(envName)/%(backupDir)/variables/variables_proc") + '| grep DB_USER)',
-                'DB_PASSWORD=$(' + lftp.cmd("ls %(envName)/%(backupDir)/variables/variables_proc") + '| grep DB_PASSWORD)',
+                'DB_USER=$(' + lftp.cmd("cat %(envName)/%(backupDir)/variables/variables_proc") + '| grep DB_USER)',
+                'DB_PASSWORD=$(' + lftp.cmd("cat %(envName)/%(backupDir)/variables/variables_proc") + '| grep DB_PASSWORD)',
                 'mysqldump --user=jahia-db-4816791 --password=XhgIoVUOAvpU8pccAqS4 --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
