@@ -92,17 +92,11 @@ function BackupManager(config) {
                 'tar -zcf data.tar.gz /data',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_proc',
-                'grep -e "^XMS" -e "^_JAVA_OPTIONS" /.jelenv > variables_cp'
+                'grep -e "^XMS" -e "^_JAVA_OPTIONS" /.jelenv > variables_cp',
+                'cat /.jelenv|grep ^DB_ > db_credentials',
             ], {
                 nodeGroup : "proc",
                 excludeListUrl: excludeListUrl,
-                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
-            }],
-            [ me.cmd, [
-                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} -h mysqldb --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
-                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
-            ], {
-                nodeGroup: "proc",
                 maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }],
             [ me.cmd, [
@@ -110,9 +104,9 @@ function BackupManager(config) {
                     "mkdir %(envName)",
                     "mkdir %(envName)/%(backupDir)",
                     "cd %(envName)/%(backupDir)",
-                    "put jahia.sql",
                     "put data.tar.gz",
                     "mkdir variables",
+                    "put db_credentials",
                     "cd variables",
                     "put jahia_version",
                     "put variables_proc",
@@ -125,10 +119,16 @@ function BackupManager(config) {
             }],
             [ me.cmd, [
                 'yum -y install lftp',
+                lftp.cmd("cat %(envName)/%(backupDir)/db_credentials") + ' > db_credentials',
+                'source db_credentials && rm -f db_credentials',
+                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
                 lftp.cmd([
-                    "cd %(envName)/%(backupDir)/variables",
+                    "cd %(envName)/%(backupDir)",
+                    "rm db_credentials",
+                    "put jahia.sql",
+                    "cd variables",
                     "put variables_sqldb"
                 ])
             ], {
@@ -166,6 +166,12 @@ function BackupManager(config) {
                 envName : config.envName,
                 backupCount : config.backupCount,
                 backupDir : backupDir
+            }],
+            [ me.cmd, [
+                'wget --http-user=${MANAGER_USER} --http-password=${MANAGER_PASSWORD} -O - %(maintenanceUrl)=false || true'
+            ], {
+                nodeGroup: "proc",
+                maintenanceUrl : _("http://%(host)/modules/tools/maintenance.jsp?fullReadOnlyMode", { host : config.maintenanceHost })
             }]
         ]);
     };
