@@ -127,7 +127,7 @@ function BackupManager(config) {
                 lftp.cmd([
                     "cd %(envName)/%(backupDir)",
                     "put jahia.sql",
-                    "cd %(envName)/%(backupDir)/variables",
+                    "cd variables",
                     "put variables_sqldb"
                 ])
             ], {
