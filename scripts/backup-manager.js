@@ -92,7 +92,8 @@ function BackupManager(config) {
                 'tar -zcf data.tar.gz /data',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_proc',
-                'grep -e "^XMS" -e "^_JAVA_OPTIONS" /.jelenv > variables_cp'
+                'grep -e "^XMS" -e "^_JAVA_OPTIONS" /.jelenv > variables_cp',
+                'cat /.jelenv|grep ^DB_ > db_credentials',
             ], {
                 nodeGroup : "proc",
                 excludeListUrl: excludeListUrl,
@@ -105,6 +106,7 @@ function BackupManager(config) {
                     "cd %(envName)/%(backupDir)",
                     "put data.tar.gz",
                     "mkdir variables",
+                    "put db_credentials",
                     "cd variables",
                     "put jahia_version",
                     "put variables_proc",
@@ -117,11 +119,12 @@ function BackupManager(config) {
             }],
             [ me.cmd, [
                 'yum -y install lftp',
-                'DB_USER=$(' + lftp.cmd("cat %(envName)/%(backupDir)/variables/variables_proc") + '| grep DB_USER)',
-                'DB_PASSWORD=$(' + lftp.cmd("cat %(envName)/%(backupDir)/variables/variables_proc") + '| grep DB_PASSWORD)',
-                'echo $DB_USER',
-                'echo $DB_PASSWORD',
-                'mysqldump --user=jahia-db-4816791 --password=XhgIoVUOAvpU8pccAqS4 --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
+                lftp.cmd([
+                    "cd %(envName)/%(backupDir)",
+                    "pget %(envName)/%(backupDir)/db_credentials"
+                ]),
+                'source db_credentials',
+                'mysqldump --user=${DB_USER} --password=${DB_PASSWORD} --single-transaction --quote-names --opt --databases --compress jahia > jahia.sql',
                 'wget -q %(excludeListUrl) -O variables_exclude_list',
                 'grep -v -f variables_exclude_list /.jelenv > variables_sqldb',
                 lftp.cmd([
