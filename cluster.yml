@@ -85,8 +85,8 @@ nodes:
     cloudlets: 64
     nodeGroup: nosqldb
 
-
   - nodeType: mariadb10
+    tag: 10.2.12
     displayName: MariaDB
     count: 1
     cloudlets: 64
