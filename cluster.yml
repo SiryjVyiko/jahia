@@ -10,7 +10,7 @@ description:
     your entire digital ecosystem to innovate and deliver great customer experiences,
     foster internal collaboration and support dynamic business needs for sustainable
     growth.
-baseUrl: https://raw.githubusercontent.com/jelastic-jps/jahia/master
+baseUrl: https://raw.githubusercontent.com/SiryjVyiko/jahia/master
 
 onBeforeInit: https://raw.githubusercontent.com/SiryjVyiko/jahia/master/scripts/clusterOnBeforeInit.js?_r=dsfsdfds
 
