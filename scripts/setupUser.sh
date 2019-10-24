@@ -12,7 +12,7 @@ resp=$(mysql -u$user -p$pswd mysql --execute="SHOW COLUMNS FROM user")
 [ -z "$resp" ] && {
         if (( $(awk 'BEGIN {print ("'$version'" >= "'10.4'")}') )); then
             $JEM passwd set -p $ADMIN_PASSWORD
-            cmd="CREATE USER '$USER'@'localhost' IDENTIFIED BY '$PASSWORD'; CREATE USER '$USER'@'%' IDENTIFIED BY '$PASSWORD'; GRANT ALL PRIVILEGES ON *.* TO '$USER'@'localhost' WITH GRANT OPTION; GRANT ALL PRIVILEGES ON *.* TO '$USER'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+            cmd="CREATE USER '$user'@'localhost' IDENTIFIED BY '$pswd'; CREATE USER '$user'@'%' IDENTIFIED BY '$pswd'; GRANT ALL PRIVILEGES ON *.* TO '$user'@'localhost' WITH GRANT OPTION; GRANT ALL PRIVILEGES ON *.* TO '$user'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
             $MYSQL -uroot -p${ADMIN_PASSWORD} --execute="$cmd"
         else
             service mysql stop;
