@@ -7,7 +7,8 @@ JEM=$(which jem)
 MYSQL=$(which mysql)
 MYSQLD_SAFE=$(which mysqld_safe)
 unset resp;
-version=$(mysql --version|awk '{ print $5 }'|awk -F\, '{ print $1 }')
+full_version=$(mysql --version|awk '{ print $5 }'|awk -F\, '{ print $1 }')
+version=${full_version%.*} 
 resp=$(mysql -u$user -p$pswd mysql --execute="SHOW COLUMNS FROM user")
 [ -z "$resp" ] && {
         if (( $(awk 'BEGIN {print ("'$version'" >= "'10.4'")}') )); then
