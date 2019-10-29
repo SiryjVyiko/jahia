@@ -11,7 +11,7 @@ full_version=$(mysql --version|awk '{ print $5 }'|awk -F\, '{ print $1 }')
 version=${full_version%.*} 
 resp=$(mysql -u$user -p$pswd mysql --execute="SHOW COLUMNS FROM user" 2>/dev/null);
 res=$?;
-if [ "$result" -eq 0 ] ; then
+if [ "$res" -eq 0 ] ; then
     echo "[Info] User $user has the required access to the database." 
 else
     if (( $(awk 'BEGIN {print ('$version' >= 10.4)}') )); then
